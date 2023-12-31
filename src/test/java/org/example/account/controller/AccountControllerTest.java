@@ -1,7 +1,7 @@
 package org.example.account.controller;
 
 import org.example.account.domain.Account;
-import org.example.account.domain.AccountStatus;
+import org.example.account.type.AccountStatus;
 import org.example.account.service.AccountService;
 import org.example.account.service.RedisTestService;
 import org.junit.jupiter.api.Test;
