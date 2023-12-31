@@ -3,6 +3,7 @@ package org.example.account.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.account.domain.Account;
+import org.example.account.dto.AccountDto;
 import org.example.account.dto.CreateAccount;
 import org.example.account.service.AccountService;
 import org.example.account.service.RedisTestService;
@@ -17,12 +18,13 @@ public class AccountController {
     @PostMapping("/account")
     public CreateAccount.Response createAccount(
             @RequestBody @Valid CreateAccount.Request request
-            ) {
-        accountService.createAccount(
-                request.getUserId(),
-                request.getInitialBalance()
+    ) {
+        return CreateAccount.Response.from(
+                accountService.createAccount(
+                        request.getUserId(),
+                        request.getInitialBalance()
+                )
         );
-        return "success";
     }
 
     @GetMapping("/get-lock")
