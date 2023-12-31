@@ -84,6 +84,7 @@ public class AccountService {
         return AccountDto.fromEntity(account);
     }
 
+
     private void valdateDeleteAccount(AccountUser accountUser, Account account) {
         if (!Objects.equals(accountUser.getId(), account.getAccountUser().getId())) {
             throw new AccountException(USER_ACCOUNT_UN_MATCH);
@@ -96,6 +97,7 @@ public class AccountService {
         }
     }
 
+    @Transactional
     public List<AccountDto> getAccountsByUserId(Long userId) {
         AccountUser accountUser = accountUserRepository.findById(userId)
                 .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
