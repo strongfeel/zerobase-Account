@@ -42,7 +42,7 @@ public class TransactionService {
 
         validateUseBalance(user, account, amount);
 
-        account.setBalance(amount);
+        account.useBalance(amount);
 
         return TransactionDto.fromEntity(saveAndGetTransaction(S, account, amount));
     }

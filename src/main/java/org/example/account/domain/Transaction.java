@@ -2,7 +2,6 @@ package org.example.account.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.account.type.AccountStatus;
 import org.example.account.type.TransactionResultType;
 import org.example.account.type.TransactionType;
 import org.springframework.data.annotation.CreatedDate;
