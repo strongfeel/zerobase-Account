@@ -10,8 +10,6 @@ import org.example.account.repository.AccountUserRepository;
 import org.example.account.repository.TransactionRepository;
 import org.example.account.type.AccountStatus;
 import org.example.account.type.ErrorCode;
-import org.example.account.type.TransactionResultType;
-import org.example.account.type.TransactionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +26,8 @@ import static org.example.account.type.TransactionResultType.F;
 import static org.example.account.type.TransactionResultType.S;
 import static org.example.account.type.TransactionType.CANCEL;
 import static org.example.account.type.TransactionType.USE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -101,7 +100,7 @@ class TransactionServiceTest {
                 () -> transactionService.useBalance(1L, "1000000000", 1000L));
 
         //then
-        assertEquals(ErrorCode.ACCOUNT_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -450,6 +449,54 @@ class TransactionServiceTest {
 
         //then
         assertEquals(ErrorCode.TO_OLD_ORDER_TO_CANCEL, exception.getErrorCode());
+    }
+
+    @Test
+    void successQueryTransaction() {
+        //given
+        AccountUser user = AccountUser.builder()
+                .id(12L)
+                .name("Pobi").build();
+        Account account = Account.builder()
+                .id(1L)
+                .accountUser(user)
+                .accountStatus(IN_USE)
+                .balance(10000L)
+                .accountNumber("1000000012").build();
+        Transaction transaction = Transaction.builder()
+                .account(account)
+                .transactionType(USE)
+                .transactionResultType(S)
+                .transactionId("transactionId")
+                .transactedAt(LocalDateTime.now().minusYears(1))
+                .amount(CANCEL_AMOUNT)
+                .balanceSnapshot(9000L)
+                .build();
+        given(transactionRepository.findByTransactionId(anyString()))
+                .willReturn(Optional.of(transaction));
+        //when
+        TransactionDto transactionDto = transactionService.queryTransaction("trxId");
+        //then
+        assertEquals(USE, transactionDto.getTransactionType());
+        assertEquals(S, transactionDto.getTransactionResultType());
+        assertEquals("transactionId", transactionDto.getTransactionId());
+
+    }
+
+    @Test
+    @DisplayName("원 거래 없음 - 거래 조회 실패")
+    void queryTransaction_TransactionNotFound() {
+        //given
+
+        given(transactionRepository.findByTransactionId(anyString()))
+                .willReturn(Optional.empty());
+
+        //when
+        AccountException exception = assertThrows(AccountException.class,
+                () -> transactionService.queryTransaction("transactionId"));
+
+        //then
+        assertEquals(ErrorCode.TRANSACTION_NOT_FOUND, exception.getErrorCode());
     }
 
 }
