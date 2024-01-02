@@ -3,6 +3,7 @@ package org.example.account.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.account.aop.AccountLock;
 import org.example.account.dto.CancelBalance;
 import org.example.account.dto.QueryTransactionResponse;
 import org.example.account.dto.TransactionDto;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
     private final TransactionService transactionService;
     @PostMapping("/transaction/use")
+    @AccountLock
     public UseBalance.Response useBalance(
             @Valid @RequestBody UseBalance.Request request
     ){
         try {
+            Thread.sleep(5000L);
             return UseBalance.Response.from(transactionService.useBalance(
                     request.getUserId(),
                     request.getAccountNumber(),
@@ -41,10 +44,13 @@ public class TransactionController {
             );
 
             throw e;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/transaction/cancel")
+    @AccountLock
     public CancelBalance.Response cancelBalance(
             @Valid @RequestBody CancelBalance.Request request
     ){
