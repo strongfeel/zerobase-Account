@@ -7,7 +7,7 @@ import org.example.account.dto.CreateAccount;
 import org.example.account.dto.DeleteAccount;
 import org.example.account.exception.AccountException;
 import org.example.account.service.AccountService;
-import org.example.account.service.RedisTestService;
+/*import org.example.account.service.RedisTestService;*/
 import org.example.account.type.AccountStatus;
 import org.example.account.type.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ class AccountControllerTest {
     @MockBean
     private AccountService accountService;
 
-    @MockBean
-    private RedisTestService redisTestService;
+    /*@MockBean
+    private RedisTestService redisTestService;*/
 
     @Autowired
     private MockMvc mockMvc;
